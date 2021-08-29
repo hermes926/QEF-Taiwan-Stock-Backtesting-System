@@ -10,7 +10,6 @@ strategy = pd.read_csv('./Strategies/' + filename)
 strategy['date'] = pd.to_datetime(strategy['date'])
 
 init = 100000
-# print(strategy)
 earning = [[]]
 
 
