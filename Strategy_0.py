@@ -28,13 +28,11 @@ for index in series:
         sum = 0
         for i in range(50):
             sum += asset[i][0]
-        # print(sum)
         earning.append([index, sum])
         # update for the plot
 
         time_data = pd.read_csv("./ProcessedData\\" + time + ".csv")
         for i in range(50):
-            # print(asset[i])
             if asset[i][1] == "-1":
                 for j in rawdata:
                     today = time_data.loc[time_data['identifier'] == j]
@@ -44,6 +42,8 @@ for index in series:
                         asset[i][1] = j
                         asset[i][2] = asset[i][0] / today['open_'].values[0]
                         break 
+            # No holding
+            
             else:
                 today = time_data.loc[time_data['identifier'] == asset[i][1]]
                 if not today.empty:
@@ -54,18 +54,17 @@ for index in series:
                     mapped[asset[i][1]] = 0
                     asset[i][1] = "-1"
                     asset[i][2] = 0
-
-
-            
-
+            # Holding 
+        
         last = time_data
+
 # print(earning)
 series = pd.DataFrame(earning, columns =['date', 'earning'])
 series['date'] = pd.to_datetime(series['date'])
 plt.plot(series['date'], series['earning'])
 plt.xlabel('Date')
 plt.ylabel('Money')
-plt.title('Random Buying Stock earning')
+plt.title('MA 5, 20 cross, 50 portion, stock earning')
 plt.legend(['Earning'])
 
 plt.savefig('./Result/plot_new1.jpg', dpi=300, bbox_inches='tight')
