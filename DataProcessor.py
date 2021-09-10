@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 rawdata = pd.read_csv('../pricevol.csv')
-rawdata = rawdata[["identifier", "date_", "open_","close_"]]
+rawdata = rawdata[["identifier", "date_", "open_","close_", "volume_"]]
 ids = pd.unique(rawdata["identifier"])
 
 newdata = pd.DataFrame()
@@ -29,4 +29,4 @@ for index in series:
         # print(nowdata)
         # break
         time = index.strftime("%Y%m%d")
-        nowdata.to_csv("C:\MyFile_new\Others\QEF\QEF-project\ProcessedData\\" + time + ".csv", index=False)
+        nowdata.to_csv("C:\Users\Jonathan_Hsu\Documents\quant\QEF-project\ProcessedData\\" + time + ".csv", index=False)

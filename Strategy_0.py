@@ -17,6 +17,9 @@ mapped = { i: 0 for i in rawdata}
 cnt = 0
 earning = [[]]
 last = pd.DataFrame()
+vol_threshold = 250000.
+transaction_cost = .999
+turnover = 0
 
 for index in series:
     print(index)
@@ -36,6 +39,7 @@ for index in series:
         # update for the plot
 
         time_data = pd.read_csv("./ProcessedData\\" + time + ".csv")
+        time_data = time_data.loc[time_data.volume_ > vol_threshold]
         for i in range(50):
             if asset[i][1] == "-1":
                 for j in rawdata:
@@ -44,20 +48,23 @@ for index in series:
                     if mapped[j] == 0 and not today.empty and not yest.empty and today['MA_5'].values[0] > today['MA_20'].values[0] and yest['MA_20'].values[0] > yest['MA_5'].values[0]:
                         mapped[j] = 1
                         asset[i][1] = j
+                        asset[i][0] *= transaction_cost
                         asset[i][2] = asset[i][0] / today['open_'].values[0]
+                        turnover += 1
                         break 
             # Long and No holding
             
             else:
                 today = time_data.loc[time_data['identifier'] == asset[i][1]]
                 if not today.empty:
-                    asset[i][0] = asset[i][2] * today['open_'].values[0]    
+                    asset[i][0] = asset[i][2] * today['open_'].values[0] * transaction_cost   
 
                 yest = last.loc[last['identifier'] == asset[i][1]]
                 if not today.empty and not yest.empty and today['MA_5'].values[0] < today['MA_20'].values[0] and yest['MA_20'].values[0] < yest['MA_5'].values[0]:
                     mapped[asset[i][1]] = 0
                     asset[i][1] = "-1"
                     asset[i][2] = 0
+                    turnover += 1
             # Long Holding 
         
             if neg_asset[i][1] == "-1":
@@ -67,20 +74,23 @@ for index in series:
                     if mapped[j] == 0 and not today.empty and not yest.empty and today['MA_5'].values[0] < today['MA_20'].values[0] and yest['MA_20'].values[0] < yest['MA_5'].values[0]:
                         mapped[j] = 1
                         neg_asset[i][1] = j
+                        neg_asset[i][0] *= transaction_cost
                         neg_asset[i][2] = neg_asset[i][0] / today['open_'].values[0]
+                        turnover += 1
                         break 
             # Short and no holding
             
             else:
                 today = time_data.loc[time_data['identifier'] == neg_asset[i][1]]
                 if not today.empty:
-                    neg_asset[i][0] = neg_asset[i][2] * today['open_'].values[0]    
+                    neg_asset[i][0] = neg_asset[i][2] * today['open_'].values[0] * transaction_cost 
 
                 yest = last.loc[last['identifier'] == neg_asset[i][1]]
                 if not today.empty and not yest.empty and today['MA_5'].values[0] > today['MA_20'].values[0] and yest['MA_20'].values[0] > yest['MA_5'].values[0]:
                     mapped[neg_asset[i][1]] = 0
                     neg_asset[i][1] = "-1"
                     neg_asset[i][2] = 0
+                    turnover += 1
             # Short and Holding 
         
 
@@ -95,8 +105,8 @@ plt.ylabel('Money')
 plt.title('MA 5, 20 cross, 50 portion, stock earning')
 plt.legend(['Earning'])
 
-plt.savefig('./Result/plot_new1.jpg', dpi=300, bbox_inches='tight')
-
+plt.savefig('./Result/plot_tc_01.jpg', dpi=300, bbox_inches='tight')
+print(turnover)
 
 
         
