@@ -49,7 +49,7 @@ for index in series:
                         mapped[j] = 1
                         asset[i][1] = j
                         asset[i][0] *= transaction_cost
-                        asset[i][2] = asset[i][0] / today['open_'].values[0]
+                        asset[i][2] = asset[i][0] / today['adj_close_'].values[0]
                         turnover += 1
                         break 
             # Long and No holding
@@ -57,7 +57,7 @@ for index in series:
             else:
                 today = time_data.loc[time_data['identifier'] == asset[i][1]]
                 if not today.empty:
-                    asset[i][0] = asset[i][2] * today['open_'].values[0] * transaction_cost   
+                    asset[i][0] = asset[i][2] * today['adj_close_'].values[0] * transaction_cost   
 
                 yest = last.loc[last['identifier'] == asset[i][1]]
                 if not today.empty and not yest.empty and today['MA_5'].values[0] < today['MA_20'].values[0] and yest['MA_20'].values[0] < yest['MA_5'].values[0]:
@@ -75,7 +75,7 @@ for index in series:
                         mapped[j] = 1
                         neg_asset[i][1] = j
                         neg_asset[i][0] *= transaction_cost
-                        neg_asset[i][2] = neg_asset[i][0] / today['open_'].values[0]
+                        neg_asset[i][2] = neg_asset[i][0] / today['adj_close_'].values[0]
                         turnover += 1
                         break 
             # Short and no holding
@@ -83,7 +83,7 @@ for index in series:
             else:
                 today = time_data.loc[time_data['identifier'] == neg_asset[i][1]]
                 if not today.empty:
-                    neg_asset[i][0] = neg_asset[i][2] * today['open_'].values[0] * transaction_cost 
+                    neg_asset[i][0] = neg_asset[i][2] * today['adj_close_'].values[0] * transaction_cost 
 
                 yest = last.loc[last['identifier'] == neg_asset[i][1]]
                 if not today.empty and not yest.empty and today['MA_5'].values[0] > today['MA_20'].values[0] and yest['MA_20'].values[0] > yest['MA_5'].values[0]:
